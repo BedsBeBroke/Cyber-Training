@@ -1,6 +1,3 @@
-#!/usr/bin/env python3
-# Decrypt 7.txt (base64 + AES-128-ECB) using PyCryptodome
-#!/usr/bin/env python3
 import base64
 from Crypto.Cipher import AES
 
