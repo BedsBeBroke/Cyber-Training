@@ -1,0 +1,28 @@
+In this write-up, I will be explaining how to decrypt a singe-byte XOR Cipher. An XOR Cypher encrypts data by applying the XOR (exclusive or) operation between plaintext and the secret key. The operation will return a 0 if the bytes are the same, or a 1 if they are different.
+In this example, The hex encoded string: 1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736 has been XOR'd against a single character. We must find the key, and decrypt the message.
+First, decode the string from hex to bytes using the "bytes.fromhex()" command, putting the hex string inside. It should look something like this:
+cipher_hex = '1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736'
+data = bytes.fromhex(cipher_hex)
+
+Next, we have to test to find out which byte is used to encode the xor string. To do so, we will set up a scoring system, which will test every byte in ascii against the xor string for instances of common english letters and spaces, indicating a readable word or phrase. The scoring system should look like this:
+
+best_score = -1
+best_key = None
+best_plain = None
+
+for key in range(256):
+    plain = bytes([b ^ key for b in data])
+    text = plain.decode('ascii', errors='ignore')
+    s = 0
+    for ch in text.lower():
+        if ch == ' ':
+            s += 3
+        elif ch in 'etaoinshrdlu':
+            s += 1
+    if s > best_score:
+        best_score = s
+        best_key = key
+        best_plain = text
+
+We create variables for the best score out of every byte teested, as well as which byte scored the highest, and the plaintext that corresponds with it. Then, we iterate the xor of every byte in ascii against the xor string, using the code bytes([b ^ key for b in data]).
+Then, we assign point values to spaces found in the text and for letters found commonly in englsih language. Spaces have a higher point value because they are a strong indicator of a readable string. Lastly, we compare the scores of each iteration against the last, and if one byte scores higher than the last, it is replaced as the best score. You can then print the best plaintext and best key to see what the decoded message says, and what byte was used to encode it.
